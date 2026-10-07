@@ -1,0 +1,49 @@
+/*
+ * Design tokens.
+ *
+ * `--fig-*` is the palette of Figure 1, sampled pixel by pixel from the paper
+ * (400 dpi render, dominant colour per region). It carries meaning - each hue
+ * identifies a component of the architecture - so it must not be re-tuned.
+ *
+ * `--ui-*` is the page around the figure: a quiet, printed-paper look. Blue is
+ * an accent for links and a few interactive marks, never a surface.
+ */
+:root {
+  /* ---- Figure 1 palette (measured) ---- */
+  --fig-ink: #0e2841;          /* arrows, axes, glyphs           */
+  --fig-teal: #156082;         /* encoder outline                */
+  --fig-teal-fill: #cfdfe6;    /* encoder body                   */
+  --fig-indigo: #8191bb;       /* B^T grad H outline             */
+  --fig-indigo-fill: #dae7fd;  /* B^T grad H body                */
+  --fig-green: #9abf91;        /* f_theta outline                */
+  --fig-green-fill: #ddefdc;   /* f_theta body                   */
+  --fig-green-accent: #528a5e; /* highlighted edge / Phi vector  */
+  --fig-blue-accent: #4a6599;  /* highlighted edge / Phi vector  */
+  --fig-red: #c00000;          /* u(t)                           */
+  --fig-steel: #6a8b9b;        /* y(t)                           */
+  --fig-window: #d1e0e6;       /* history window at T            */
+  --fig-window-next: #eef0f4;  /* shifted history window at T+1  */
+  --fig-gray-bar: #c8c8c8;     /* candidate library columns      */
+  --fig-frame: #9aa2a8;        /* dashed sub-frames              */
+  --fig-hair: #8a9398;         /* call-out hairlines             */
+  --fig-paper: #ffffff;
+
+  /* ---- Page ---- */
+  --ui-bg: #fdfdfb;
+  --ui-ink: #16181a;
+  --ui-muted: #4d5358;
+  --ui-faint: #8b9095;
+  --ui-rule: #e6e5e0;
+  --ui-rule-soft: #f0efeb;
+  --ui-accent: #1a4f7a;
+  --ui-accent-weak: #eef3f7;
+
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+    "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-sans: ui-sans-serif, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  --measure: 820px;   /* prose column   */
+  --wide: 1140px;     /* figure column  */
+  --nav-h: 44px;      /* sticky section nav; mirrored in ArchitectureStory */
+}

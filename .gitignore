@@ -1,0 +1,8 @@
+node_modules
+dist
+.DS_Store
+*.local
+
+# Paper-side figure sources (EPS/PDF/PNG + the scripts that draw them).
+# Leading slash: this is the top-level directory only, never src/components/figure.
+/figure/
