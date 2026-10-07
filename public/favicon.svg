@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="PH-Symb">
+  <title>PH-Symb</title>
+  <rect width="64" height="64" rx="11" fill="#ffffff"/>
+  <rect x="1.4" y="1.4" width="61.2" height="61.2" rx="9.6" fill="none" stroke="#00294B" stroke-width="2.8"/>
+  <g fill="#00294B" font-family="-apple-system,'Helvetica Neue',Helvetica,Arial,'Liberation Sans',sans-serif" font-weight="700" text-anchor="middle">
+    <text x="32" y="30.5" font-size="22" textLength="34" lengthAdjust="spacingAndGlyphs">PH-</text>
+    <text x="32" y="51" font-size="19" textLength="40" lengthAdjust="spacingAndGlyphs">Symb</text>
+  </g>
+</svg>
