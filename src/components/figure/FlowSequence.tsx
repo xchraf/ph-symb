@@ -52,12 +52,12 @@ export function FlowSequence({progress,latent=false}:{progress:number;latent?:bo
   const learning=rollout;
   const runIndex=Math.min(3,Math.floor(rollout*3.999));
   const q=latent?lerp(0,0.99,learning):[0,.45,.76,.99][runIndex];
-  const outputShift=latent?span(p,.68,.73):0;
-  const cx=latent?lerp(330,178,outputShift):330;
-  const scale=latent?lerp(80,78,outputShift):lerp(80,95,merge);
+  const outputShift=span(p,.68,.73);
+  const cx=lerp(330,178,outputShift);
+  const scale=latent?lerp(80,78,outputShift):lerp(lerp(80,95,merge),78,outputShift);
   const cy=235;
   // In the latent sequence every contribution lives in the same phase space.
-  // Keeping the component fields on this fixed frame also keeps z_{k|k}
+  // Keeping the component fields on this fixed frame also keeps \hat z_k
   // spatially consistent while J_z and -R_z are revealed and combined.
   const left=latent?cx:lerp(158,cx,merge), right=latent?cx:lerp(502,cx,merge);
   const map=(s:Pt):Pt=>({x:cx+s.x*scale,y:cy-s.y*scale});
@@ -75,8 +75,6 @@ export function FlowSequence({progress,latent=false}:{progress:number;latent?:bo
     ? p<.12?'Encoded initial condition':p<.29?'Conservative flow':p<.44?'Two contributions':p<.59?'Add the vector fields':p<.70?'Add the input':'Dynamics and output — one training checkpoint'
     : p<.19?'Conservative flow':p<.35?'Two contributions':p<.52?'Add the vector fields':p<.68?'Add the input':'Integrate each checkpoint';
   return <g aria-label={stage}>
-    <Label x={330} y={18}>{stage}</Label>
-    <Label x={330} y={40} color="var(--fig-hair)">{latent?'Illustrative 2D latent projection':'Illustrative 2D phase portrait'}</Label>
     {latent&&<g opacity={(1-.75*outputShift)*initialReveal}>
       <rect x={cx-146} y={cy-146} width={292} height={292} rx={24} fill="none" stroke="var(--fig-hair)" strokeWidth={.8} strokeDasharray="4 7" opacity={.22}/>
       <circle cx={cx} cy={cy} r={3} fill="var(--fig-hair)" opacity={.18}/>
@@ -107,32 +105,21 @@ export function FlowSequence({progress,latent=false}:{progress:number;latent?:bo
     {!latent&&<g opacity={mergeOld}>
       <SvgTex x={158} y={78} tex={latent?'J_z\\nabla H_z':'\\hat J\\nabla\\hat H'} color={C.j} size={19} opacity={j} nowrap/>
       <SvgTex x={502} y={78} tex={latent?'-R_z\\nabla H_z':'-\\hat R\\nabla\\hat H'} color={C.r} size={19} opacity={r} nowrap/>
-      <Label x={158} y={386} color={C.j} alpha={j}>Rotation · constant energy</Label>
-      <Label x={502} y={386} color={C.r} alpha={r}>Dissipation · inward flow</Label>
       <text x={330} y={228} textAnchor="middle" fontSize={32} fill="var(--fig-hair)" opacity={r}>+</text>
     </g>}
     {latent&&<g opacity={mergeOld}>
       <SvgTex x={248} y={78} tex={'J_z\\nabla H_z'} color={C.j} size={17} opacity={j} width={170} nowrap/>
       <text x={330} y={82} textAnchor="middle" fontSize={22} fill="var(--fig-hair)" opacity={r}>+</text>
       <SvgTex x={412} y={78} tex={'-R_z\\nabla H_z'} color={C.r} size={17} opacity={r} width={180} nowrap/>
-      <Label x={247} y={386} color={C.j} alpha={j}>rotation</Label>
-      <Label x={413} y={386} color={C.r} alpha={r}>inward dissipation</Label>
     </g>}
     <SvgTex x={cx-(input>0.01?42:0)} y={79} tex={latent?'(J_z-R_z)\\nabla H_z':'(\\hat J-\\hat R)\\nabla\\hat H'} color={C.f} opacity={mergeNew} size={latent?16:19} width={330} nowrap/>
     <SvgTex x={cx+112} y={79} tex={latent?'+B_z u':'+\\hat B u'} color={C.b} opacity={mergeNew*input} size={latent?16:19} width={130} nowrap/>
-    {input>0&&<g opacity={input*(1-span(p,latent?.69:.65,latent?.75:.71))}>
-      <rect x={212} y={94} width={310} height={26} rx={5} fill="var(--fig-paper)" opacity={.88}/>
-      <line x1={224} y1={108} x2={251} y2={108} stroke={C.f} strokeWidth={2.5}/>
-      <text x={259} y={112} fill="var(--fig-ink)" fontSize={11} fontFamily="var(--font-sans)">free flow · u = 0</text>
-      <line x1={378} y1={108} x2={405} y2={108} stroke={C.b} strokeWidth={2.5}/>
-      <text x={413} y={112} fill="var(--fig-ink)" fontSize={11} fontFamily="var(--font-sans)">forced flow · u ≠ 0</text>
-    </g>}
     {latent&&<g opacity={initialReveal}>
       <circle cx={map(initial).x} cy={map(initial).y} r={9-3*span(p,.02,.1)} fill="none" stroke={C.j} strokeWidth={1.2} opacity={.55*(1-.55*draw)}/>
       <circle cx={map(initial).x} cy={map(initial).y} r={4.5} fill={C.j} stroke="white" strokeWidth={1.5}/>
       <path d={`M${map(initial).x+6},${map(initial).y-5}l14,-11`} stroke={C.j} strokeWidth={1}/>
       <rect x={map(initial).x+17} y={map(initial).y-37} width={74} height={25} rx={4} fill="var(--fig-paper)" opacity={.9}/>
-      <SvgTex x={map(initial).x+54} y={map(initial).y-25} tex={'z_{k|k}'} color={C.j} size={15} width={72} nowrap/>
+      <SvgTex x={map(initial).x+54} y={map(initial).y-25} tex={'\\hat z_k'} color={C.j} size={15} width={72} nowrap/>
     </g>}
     {!latent&&draw>0&&<path d={smoothPath(runs[4].map(map))} stroke="var(--fig-ink)" opacity={.65} strokeWidth={2.6} fill="none"/>}
     {draw>0&&<g>
@@ -141,15 +128,15 @@ export function FlowSequence({progress,latent=false}:{progress:number;latent?:bo
       <circle cx={points[points.length-1].x} cy={points[points.length-1].y} r={4.8} fill={C.f} stroke="white" strokeWidth={1.7}/>
       {!latent&&<circle cx={map(initial).x} cy={map(initial).y} r={3.8} fill="var(--fig-ink)"/>}
     </g>}
-    {latent&&rollout>0&&<g opacity={rollout}>
+    {rollout>0&&<g opacity={rollout}>
       <path d="M385 104V347H652" fill="none" stroke="var(--fig-hair)" strokeWidth={1}/>
       <path d="M385 104l-2.8 5.5h5.6z M652 347l-5.5 -2.8v5.6z" fill="var(--fig-hair)"/>
       <text x={373} y={109} fill="var(--fig-hair)" fontSize={11} fontStyle="italic" fontFamily="var(--font-serif)">y</text>
       <text x={651} y={364} fill="var(--fig-hair)" fontSize={11} fontStyle="italic" fontFamily="var(--font-serif)">t</text>
-      <SvgTex x={522} y={79} tex={'\\hat y=B_z^{\\top}\\nabla H_z'} size={16} width={290} nowrap/>
+      <SvgTex x={522} y={79} tex={latent?'\\hat y=B_z^{\\top}\\nabla H_z':'\\hat y=\\hat B^{\\top}\\nabla\\hat H'} size={16} width={290} nowrap/>
       <path d={smoothPath(output(runs[4],1))} stroke="var(--fig-ink)" strokeWidth={2.6} fill="none" opacity={.65}/>
       {checkpoint>0&&<path d={smoothPath(output(runs[checkpoint-1],[0,.45,.76][checkpoint-1]))} stroke={C.f} strokeWidth={1.6} strokeDasharray="4 5" fill="none" opacity={.22}/>} 
-      <path d={smoothPath(output(current,q).slice(0,Math.max(2,Math.ceil(current.length*rollout))))} stroke={C.f} strokeWidth={2.8} fill="none"/>
+      <path d={smoothPath(output(current,q).slice(0,Math.max(2,Math.ceil(current.length*drawPart))))} stroke={C.f} strokeWidth={2.8} fill="none"/>
       <path d="M328 222h35l-6 -4m6 4l-6 4" stroke={C.f} fill="none"/>
       <g transform="translate(510 118)">
         <line x1={0} y1={0} x2={27} y2={0} stroke="var(--fig-ink)" strokeWidth={2.6} opacity={.65}/>
@@ -157,13 +144,16 @@ export function FlowSequence({progress,latent=false}:{progress:number;latent?:bo
         <line x1={0} y1={20} x2={27} y2={20} stroke={C.f} strokeWidth={2.8}/>
         <text x={35} y={24} fill="var(--fig-ink)" fontSize={11} fontFamily="var(--font-sans)">predicted ŷ</text>
       </g>
+      {latent&&<>
       <Label x={178} y={371}>Latent rollout · unobserved</Label>
       <Label x={330} y={411} color={C.f}>Shared checkpoint {checkpoint+1} / 4 · jointly learned dynamics and output</Label>
       <path d={`M175 427h${310*learning}`} stroke={C.f} strokeWidth={3} strokeLinecap="round"/>
       <path d="M175 427h310" stroke={C.f} strokeWidth={1} opacity={.22}/>
+      </>}
     </g>}
     {!latent&&draw>0&&<g opacity={draw}>
-      <SvgTex x={330} y={411} tex={'\\text{Free-run diagnostics: }\\hat x(t)\\;\\text{vs measured }x(t)'} size={14} width={620} nowrap/>
+      <SvgTex x={178} y={411} tex={'\\hat x(t)\\;\\text{vs measured }x(t)'} size={14} width={300} nowrap/>
+      <SvgTex x={518} y={411} tex={'\\text{Output: }\\hat y(t)\\;\\text{vs measured }y(t)'} size={14} width={300} nowrap/>
     </g>}
   </g>;
 }

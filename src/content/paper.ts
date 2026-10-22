@@ -9,11 +9,12 @@ export const PAPER = {
   title:
     'PH-Symb: Sparse symbolic identification of nonlinear port-Hamiltonian systems using Kolmogorov–Arnold networks',
   short: 'PH-Symb',
+  /** `scholar`: the author's Google Scholar profile; null until it is given, so the name stays plain text. */
   authors: [
-    { name: 'Achraf El Messaoudi', affiliation: 1 },
-    { name: 'Karim Cherifi', affiliation: 1 },
-    { name: 'Yann Le Gorrec', affiliation: 1 },
-    { name: 'Yongxin Wu', affiliation: 1 },
+    { name: 'Achraf El Messaoudi', affiliation: 1, scholar: 'https://scholar.google.com/citations?user=-uks0jUAAAAJ&hl=fr' as string | null },
+    { name: 'Karim Cherifi', affiliation: 1, scholar: 'https://scholar.google.com/citations?user=gE5RRyEAAAAJ&hl=en' as string | null },
+    { name: 'Yann Le Gorrec', affiliation: 1, scholar: 'https://scholar.google.com/citations?user=GfDkTtgAAAAJ&hl=fr' as string | null },
+    { name: 'Yongxin Wu', affiliation: 1, scholar: 'https://scholar.google.com/citations?user=_P-RMtkAAAAJ&hl=fr' as string | null },
   ],
   affiliations: [
     'Université Marie et Louis Pasteur, SUPMICROTECH, CNRS, institut FEMTO-ST, F-25000 Besançon, France',

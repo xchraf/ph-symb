@@ -66,7 +66,7 @@ export function PathsPanel({ p }: Props) {
       </Fade>
 
       {/* ------------------------------------------------- state at time T */}
-      <SvgTex x={STATE_T.x} y={STATE_T.y} tex="\hat{x}_{T}" size={19} opacity={pState} width={90} height={40} />
+      <SvgTex x={STATE_T.x} y={STATE_T.y} tex="\hat{x}_{k}" size={19} opacity={pState} width={90} height={40} />
 
       {/* collocated output branch */}
       <Arrow
@@ -100,7 +100,7 @@ export function PathsPanel({ p }: Props) {
       <SvgTex
         x={OUT_Y.x}
         y={OUT_Y.y}
-        tex="\hat{y}_{T}"
+        tex="\hat{y}_{k}"
         size={19}
         opacity={clamp01((pOut - 0.6) / 0.4)}
         width={80}
@@ -132,7 +132,7 @@ export function PathsPanel({ p }: Props) {
       />
 
       {/* input port */}
-      <SvgTex x={IN_U.x} y={IN_U.y} tex="u(T)" size={17} opacity={pIn} width={80} height={36} />
+      <SvgTex x={IN_U.x} y={IN_U.y} tex="u(k)" size={17} opacity={pIn} width={80} height={36} />
       <Arrow
         from={{ x: IN_U.x + 28, y: IN_U.y }}
         to={{ x: F.x - F.w / 2 - 6, y: IN_U.y }}
@@ -150,7 +150,7 @@ export function PathsPanel({ p }: Props) {
       <SvgTex
         x={STATE_T1.x}
         y={STATE_T1.y}
-        tex="\hat{x}_{T+1}"
+        tex="\hat{x}_{k+1}"
         size={19}
         opacity={clamp01((pNext - 0.4) / 0.6)}
         width={110}

@@ -9,53 +9,63 @@ export function Overview() {
   return (
     <section className="section prose" id="overview">
       <p className="section__label">Overview</p>
-      <h2>An explicit port-Hamiltonian model, identified from data</h2>
+      <h2>Symbolic, structure-preserving identification of port-Hamiltonian systems</h2>
 
       <p>
-        A port-Hamiltonian system separates what a physical plant does into four parts: stored
-        energy, power-conserving interconnection, dissipation, and the ports through which it
-        exchanges power.
+        Building mathematical models of nonlinear dynamical systems from measured data is a central
+        problem in systems and control. Reliable models are required for simulation, analysis, state
+        estimation, and model-based control. Machine-learning methods make it possible to identify
+        nonlinear models from input-state or input-output data; however, the resulting generic
+        black-box models lacked physical interpretability. The port-Hamiltonian (pH) framework is of
+        particular interest in this context. It explicitly describes stored energy, power-conserving
+        interconnection, dissipation, and power-conjugate ports, and supports passivity-based
+        control. Identifying a pH model requires respecting the underlying interconnection
+        structure, the dissipation, the closure relation between state and co-state variables, and
+        the passivity of the input-output mapping.
       </p>
 
       <div className="eq-block">
         <Tex
           display
-          tex="\dot x=\bigl(J(x)-R(x)\bigr)\nabla H(x)+B(x)\,u,\qquad y=B(x)^{\top}\nabla H(x)."
+          tex="\dot x=\bigl(J(x)-R(x)\bigr)\nabla H(x)+B(x)\,u,\qquad y=B(x)^{\top}\nabla H(x),"
         />
       </div>
 
       <p>
-        Keeping that structure while learning from data buys passivity and physical meaning, but
-        structure alone is not interpretability. Neural port-Hamiltonian models hide{' '}
-        <Tex tex="H" />, <Tex tex="J" />, <Tex tex="R" /> and <Tex tex="B" /> inside multilayer
-        perceptrons, and Gaussian-process approaches describe them through kernels. Sparse
-        regression returns readable equations, yet it identifies the vector field rather than its
-        port-Hamiltonian factors, and existing port-Hamiltonian extensions of it assume a known
-        constant interconnection matrix and need measured state trajectories.
+        where <Tex tex="J(x)=-J(x)^{\top}" /> and <Tex tex="R(x)=R(x)^{\top}\succeq 0" />. Existing
+        structure-preserving approaches to pH learning could be classified according to whether the
+        system state is measured. When state measurements were available, Gaussian-process models
+        incorporated Hamiltonian or passivity priors, while structured neural models learned pH
+        dynamics from input-state or input-state-output data. When only inputs and outputs were
+        measured, the state had to be inferred from the data.
       </p>
 
       <p>
-        PH-Symb closes that gap. One Kolmogorov-Arnold network is assigned to each of the four
-        components <Tex tex="J" />, <Tex tex="R" />, <Tex tex="H" /> and <Tex tex="B" />, and its
-        learnable functions sit on individual edges, so each one is <em>univariate</em> and can be
-        written in a library of symbolic candidates.
-        Coupling every edge to a sparse symbolic representation <em>during</em> training yields an
-        explicit model that still satisfies the port-Hamiltonian constraints by construction, while
-        composing univariate edges across layers recovers multivariate expressions.
+        However, preserving pH structure did not by itself provide interpretability. This was
+        particularly limiting in the pH framework, where the Hamiltonian and the matrices encode
+        distinct physical mechanisms. Neural pH models generally hid these components inside
+        multilayer perceptrons (MLPs), whereas Gaussian-process approaches described them using kernel
+        functions. In contrast, Kolmogorov-Arnold networks (KANs) make the learned representation
+        easier to inspect by representing each edge function as a trainable spline. PH-KAN extended
+        KANs by embedding the pH structure into their architecture, but inspecting the learned
+        splines did not directly yield compact analytical models. Alternatively, Sparse
+        Identification of Nonlinear Dynamical systems (SINDy) returned explicit equations. If the
+        original governing equations were recovered, one important advantage was that the identified
+        model remained valid for initial conditions outside the training domain. The existing pH
+        extension of SINDy, however, assumed a known constant interconnection matrix, as well as
+        constant diagonal dissipation and input matrices, and needed state trajectories.
       </p>
 
       <p>
-        Scale is handled in the same spirit. States, inputs and outputs rarely share a numerical
-        range, and rescaling them independently would break the energy balance. PH-Symb therefore
-        normalises them together with the Hamiltonian and the matrices, preserving both the
-        port-Hamiltonian structure and the power balance, with an exact transformation back to the
-        original coordinates.
-      </p>
-
-      <p>
-        The same structured core serves both observation settings. It receives the measured state
-        when one is available, and an encoded latent state when only inputs and outputs are
-        recorded. Scroll through the figure below to see how.
+        A general method that constructs explicit symbolic expressions for all pH components, while
+        considering both the case where the system states are measured and the case where only
+        input-output data are available, had to be developed. This was the purpose of{' '}
+        <strong>PH-Symb</strong>: a separate KAN is used for each pH component{' '}
+        <Tex tex="\Phi_\beta(x)" />, <Tex tex="\beta\in\{J,R,H,B\}" />, which takes <Tex tex="x" />{' '}
+        as input for ISO data or <Tex tex="z" /> for IO data, and symbolic regression is then applied
+        to each spline edge function to obtain an explicit expression from a prescribed library.
+        Scroll through the figure below to follow the two settings, the architecture, and the
+        symbolic regression on its edges.
       </p>
     </section>
   );

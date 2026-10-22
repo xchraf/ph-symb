@@ -54,7 +54,7 @@ export function KanCore({ p, raw }: Props) {
         dash="5 4"
       />
 
-      <g opacity={graphAlpha}>
+      <g opacity={graphAlpha} transform="translate(95.2,-150.2) scale(1.28)">
       {/* ----------------------------------------------------- input layer */}
       <SvgTex
         x={KAN.inputLabel.x}
@@ -301,18 +301,14 @@ export function KanCore({ p, raw }: Props) {
           </g>
         );
       })}
-      <SvgTex
-        x={HEAD.betaEq.x}
-        y={HEAD.betaEq.y}
-        tex="\beta\in\{J,\,R,\,H,\,B\}"
-        size={14}
-        opacity={clamp01((pFan - 0.5) / 0.5)}
-        width={220}
-        height={30}
-      />
 
       </g>
 
+      {/* which component this KAN is - one per component */}
+      <SvgTex x={CORE_FRAME.w / 2} y={24} tex={'\\beta\\in\\{J,\\,R,\\,H,\\,B\\}'} size={21} opacity={p('core.frame')} width={260} height={38} />
+
+
+      <g transform="translate(95.2,-150.2) scale(1.28)">
       {/* the opened edge stays bright while the rest of the network recedes */}
       {dim > 0.02 &&
         (() => {
@@ -336,6 +332,7 @@ export function KanCore({ p, raw }: Props) {
           the eye out to the panel where it happens */}
       <Selection x={phi2Cx(PICK.phi2Index) - box / 2} y={phi2Y} size={box} p={p('core.pick2')} accent="var(--fig-green-accent)" />
       <Selection x={phi1Cx(PICK.phi1Index) - box / 2} y={phi1Y} size={box} p={p('core.pick1')} />
+      </g>
 
       {/* once the edge has an expression, every edge of the network has one */}
       {pSym > 0.01 &&

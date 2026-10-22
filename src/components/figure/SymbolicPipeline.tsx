@@ -55,7 +55,8 @@ const CURVE_STEPS = 34;
  */
 const noise = (r: number, i: number) => {
   const v = Math.abs(Math.sin((r * 7 + i * 13 + 1) * 12.9898) * 43758.5453) % 1;
-  return v > 0.66 ? 0.34 + 0.56 * ((v - 0.66) / 0.34) : 0.02 + 0.13 * v;
+  // Xi (ridge) is dense: every candidate gets a visible coefficient; only a few are large
+  return v > 0.76 ? 0.36 + 0.54 * ((v - 0.76) / 0.24) : 0.12 + 0.12 * (v / 0.76);
 };
 const TENSOR: number[][] = Array.from({ length: PIPE.tensor.rows - 1 }, (_, r) =>
   LIBRARY.map((c, i) => (r === PIPE.tensor.pick ? c.xi : noise(r, i))),
@@ -133,7 +134,11 @@ export function SymbolicPipeline({ p }: Props) {
 
   // Lambda starts near zero, is pulled onto Xi by the coupling term, then is
   // soft-thresholded by the l1 term - exactly what the objective does to it.
-  const lambda = LIBRARY.map((c) => lerp(lerp(0.03, c.xi, pCouple), soft(c.xi, L1_THRESHOLD), pL1));
+  // Both happen inside the coupling step of the tensor view: first Lambda is pulled onto the dense Xi,
+  // then the l1 term shrinks it, so Lambda ends up visibly sparser than Xi.
+  const pull = clamp01(pCouple / 0.5);
+  const shrink = Math.max(clamp01((pCouple - 0.5) / 0.5), pL1);
+  const lambda = LIBRARY.map((c) => lerp(lerp(0.03, c.xi, pull), soft(c.xi, L1_THRESHOLD), shrink));
 
   // The overlay reconstruction follows whichever coefficients are live.
   const coef = LIBRARY.map((c, i) => (pBars > 0.2 ? lambda[i] : c.xi * pXi));
@@ -422,7 +427,7 @@ export function SymbolicPipeline({ p }: Props) {
                     // Lambda starts near zero and is pulled onto Xi, then shrunk
                     const target = TENSOR[r][i];
                     const v = isLam
-                      ? lerp(lerp(0.03, target, pCouple), soft(target, L1_THRESHOLD), pL1)
+                      ? lerp(lerp(0.03, target, pull), soft(target, L1_THRESHOLD), shrink)
                       : target;
                     const len = Math.min(1, Math.abs(v) / 0.9) * (cellW * 0.58);
                     if (len < 0.6) return null;
@@ -435,7 +440,7 @@ export function SymbolicPipeline({ p }: Props) {
                         height={8}
                         rx={2}
                         fill={accent}
-                        opacity={rowIn * (isLam ? 0.9 : 0.55)}
+                        opacity={rowIn * (isLam ? 0.95 : 0.6)}
                       />
                     );
                   })}
@@ -553,11 +558,6 @@ export function SymbolicPipeline({ p }: Props) {
       </Fade>
 
       {/* ------------------- E - the highlighted row, magnified, with axes */}
-      <Fade p={pBars}>
-        <text x={PIPE.chartTitle.x} y={PIPE.chartTitle.y} textAnchor="middle" fontSize={12} fill="var(--fig-ink)" fontFamily="var(--font-sans)">
-          the highlighted row, magnified — the coefficients of this one edge
-        </text>
-      </Fade>
 
       {/* value axis */}
       <DrawPath
@@ -588,16 +588,6 @@ export function SymbolicPipeline({ p }: Props) {
           transform={`rotate(-90 ${PIPE.valueAxisX - 22} ${bars.baseline - bars.max / 2})`}
         >
           coefficient value
-        </text>
-        <text
-          x={theta.x + theta.w / 2}
-          y={PIPE.barTickY + 22}
-          textAnchor="middle"
-          fontSize={11}
-          fill="var(--fig-hair)"
-          fontFamily="var(--font-sans)"
-        >
-          candidate term of the library
         </text>
       </Fade>
 
@@ -816,16 +806,6 @@ export function SymbolicPipeline({ p }: Props) {
             </g>
           );
         })}
-      <SvgTex
-        x={PIPE.every.x}
-        y={PIPE.every.y + 34}
-        tex="\text{one fit per edge, per block }\beta\in\{J,R,H,B\}"
-        size={13}
-        opacity={clamp01((pEvery - 0.35) / 0.65)}
-        width={560}
-        height={28}
-      />
-
       <Arrow
         from={{ x: PIPE.block.x, y: PIPE.every.y + 62 }}
         to={{ x: PIPE.block.x, y: PIPE.block.y - PIPE.block.h / 2 - 5 }}
@@ -848,7 +828,7 @@ export function SymbolicPipeline({ p }: Props) {
       <SvgTex
         x={PIPE.block.x}
         y={PIPE.block.y}
-        tex="\hat H,\;\hat J,\;\hat R,\;\hat B"
+        tex="\hat J,\;\hat R,\;\hat H,\;\hat B"
         size={17}
         opacity={clamp01((pToBlock - 0.5) / 0.5)}
         width={240}

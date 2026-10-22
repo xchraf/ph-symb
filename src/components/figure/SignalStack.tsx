@@ -46,6 +46,15 @@ export const axisYAt = (collapse = 0) => mix(AXIS_Y, AXIS_Y_TIGHT, collapse);
 
 const N = 90;
 
+/** Same signals as `trace`, sampled at s in [0,1]: lets callers pin marks onto them. */
+const TRACE_SEEDS: Record<string, [number, number]> = { u: [0.5, 20], x1: [2.1, 17], x2: [3.7, 15], xn: [5.2, 16], y: [1.3, 18] };
+export function traceYAt(id: string, s: number): number {
+  const [seed, amp] = TRACE_SEEDS[id];
+  const t = s * 6.2;
+  const v = Math.sin(t * 0.95 + seed) * 0.62 + Math.sin(t * 1.9 + seed * 2.1) * 0.26 + Math.sin(t * 3.4 + seed * 0.7) * 0.12;
+  return ROW_CY[id] - amp * v;
+}
+
 function trace(seed: number, cy: number, amp: number, w: number): Pt[] {
   return Array.from({ length: N + 1 }, (_, i) => {
     const s = i / N;
@@ -97,7 +106,7 @@ export function SignalStack({ w, pFrame, pU, pState, pY, stateAlpha = 1, collaps
 
   return (
     <g>
-      <Axes x={TRACE_X0 - 16} y={-14} w={w - TRACE_X0 + 40} h={axisY + 14} p={pFrame} label="t" />
+      <Axes x={TRACE_X0 - 2} y={-14} w={w - TRACE_X0 + 26} h={axisY + 14} p={pFrame} yArrow label="t" />
 
       {/* highlighted history window */}
       {win && win.p > 0.01 && (

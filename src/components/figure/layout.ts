@@ -120,9 +120,9 @@ export const HEAD = {
   fanY: 60,
   fanH: 82,
   fanW: 36,
-  fanXs: [372, 428, 484, 540],
+  fanXs: [240, 296, 352, 408],
   fanLabelY: 166,
-  betaEq: { x: 456, y: 188 },
+  betaEq: { x: 324, y: 188 },
 };
 
 /** One KAN block per port-Hamiltonian component, in the paper's order. */
@@ -210,8 +210,9 @@ export const PIPE = {
  */
 export const EDGE_CALLOUT = {
   from: [
-    [CORE_AT.x + phi1Cx(PICK.phi1Index) + KAN.boxSize / 2 + 4, CORE_AT.y + KAN.phi1Y],
-    [CORE_AT.x + phi1Cx(PICK.phi1Index) + KAN.boxSize / 2 + 4, CORE_AT.y + KAN.phi1Y + KAN.boxSize],
+    // the network is drawn enlarged inside the core frame (see KanCore): translate(95.2,-150.2) scale(1.28)
+    [CORE_AT.x + 95.2 + 1.28 * (phi1Cx(PICK.phi1Index) + KAN.boxSize / 2 + 4), CORE_AT.y - 150.2 + 1.28 * KAN.phi1Y],
+    [CORE_AT.x + 95.2 + 1.28 * (phi1Cx(PICK.phi1Index) + KAN.boxSize / 2 + 4), CORE_AT.y - 150.2 + 1.28 * (KAN.phi1Y + KAN.boxSize)],
   ] as [number, number][],
   to: [
     [PIPE_AT.x + PIPE.spline.x, PIPE_AT.y + PIPE.spline.y],
@@ -231,16 +232,38 @@ export const sampleS = (k: number) => -0.86 + (1.72 * k) / (PIPE.samples - 1);
 
 /** The candidate library, and the edge we open up: a sparse combination. */
 export const LIBRARY = [
-  { id: 'one', tex: '1', xi: 0.06 },
+  { id: 'one', tex: '1', xi: 0.12 },
   { id: 'lin', tex: 's', xi: 0.86 },
-  { id: 'sq', tex: 's^2', xi: 0.11 },
-  { id: 'cu', tex: 's^3', xi: 0.09 },
+  { id: 'sq', tex: 's^2', xi: 0.19 },
+  { id: 'cu', tex: 's^3', xi: 0.15 },
   { id: 'sin', tex: '\\sin s', xi: 0.55 },
-  { id: 'cos', tex: '\\cos s', xi: 0.07 },
-  { id: 'tanh', tex: '\\tanh s', xi: 0.14 },
+  { id: 'cos', tex: '\\cos s', xi: 0.13 },
+  { id: 'tanh', tex: '\\tanh s', xi: 0.22 },
 ] as const;
 
 export const LIBRARY_SIZE = LIBRARY.length;
 
 /** Soft-threshold applied by the l1 term; what survives is what exceeds it. */
-export const L1_THRESHOLD = 0.2;
+export const L1_THRESHOLD = 0.25;
+
+/* ----------------------------------------------- Figure 1 of the paper, redrawn */
+
+/**
+ * The left half of the paper's architecture figure (x -> Phi_beta -> vtf -> the
+ * pH equation) is drawn in the figure's own layout pixels and shrunk by
+ * ARCH_SCALE, so the coordinates can be compared 1:1 with `make_diagram.py`.
+ */
+export const ARCH_AT = { x: -35, y: 1408 };
+export const ARCH_SCALE = 0.5;
+/** Right edge / top / bottom of the dotted frame around the four Phi_beta. */
+export const ARCH_FRAME = { x0: 143, y0: 120, x1: 300, y1: 745 };
+/** Canvas position of a point given in the figure's layout pixels. */
+export const archPt = (x: number, y: number, k: number = ARCH_SCALE, dy = 0): [number, number] => [ARCH_AT.x + x * k, ARCH_AT.y + dy + y * k];
+/** the overview slide draws the left half of Figure 1 larger */
+export const ARCH_SCALE_OVERVIEW = 0.64;
+/** ... and lifts it a little, so the two zoom lines leave the dotted frame on a slight up / down diagonal */
+export const ARCH_OVERVIEW_DY = -55;
+
+/** The two SINDy panels, to the right of the network (canvas coordinates). */
+export const SINDY_GREEN = { x: 1412, y: 1450, w: 350, h: 192 };
+export const SINDY_BLUE = { x: 1406, y: 1656, w: 350, h: 214 };

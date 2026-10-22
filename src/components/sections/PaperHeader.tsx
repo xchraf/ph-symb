@@ -44,7 +44,13 @@ export function PaperHeader() {
       <p className="paper-header__authors">
         {PAPER.authors.map((a, i) => (
           <span key={a.name}>
-            {a.name}
+            {a.scholar ? (
+              <a href={a.scholar} target="_blank" rel="noreferrer noopener">
+                {a.name}
+              </a>
+            ) : (
+              a.name
+            )}
             <sup>{a.affiliation}</sup>
             {i < PAPER.authors.length - 1 ? ', ' : ''}
           </span>

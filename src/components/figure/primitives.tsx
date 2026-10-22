@@ -250,6 +250,7 @@ export function Axes({
   h,
   p,
   arrow = true,
+  yArrow = false,
   label,
 }: {
   x: number;
@@ -258,6 +259,7 @@ export function Axes({
   h: number;
   p: number;
   arrow?: boolean;
+  yArrow?: boolean;
   label?: string;
 }) {
   const t = clamp01(p);
@@ -269,6 +271,13 @@ export function Axes({
       {arrow && (
         <polygon
           points={`${x + w},${y + h} ${x + w - 6.5},${y + h - 3.2} ${x + w - 6.5},${y + h + 3.2}`}
+          fill="var(--fig-ink)"
+          opacity={clamp01((t - 0.75) / 0.25)}
+        />
+      )}
+      {yArrow && (
+        <polygon
+          points={`${x},${y - 1} ${x - 3.2},${y + 5.5} ${x + 3.2},${y + 5.5}`}
           fill="var(--fig-ink)"
           opacity={clamp01((t - 0.75) / 0.25)}
         />

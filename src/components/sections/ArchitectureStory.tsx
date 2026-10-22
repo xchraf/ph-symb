@@ -54,7 +54,13 @@ export function ArchitectureStory() {
     if (t + 1e-6 >= a.at) actIndex = i;
   });
   const act = STORY.acts[actIndex];
-  const step = actIndex + 1;
+  // The caption is finer than the act: it follows the animation, cue by cue.
+  let capIndex = 0;
+  STORY.captions.forEach((c, i) => {
+    if (t + 1e-6 >= c.at) capIndex = i;
+  });
+  const cap = STORY.captions[capIndex];
+  const step = capIndex + 1;
 
   /** Scroll to the first act of a section, allowing for the sticky nav. */
   const goToSection = useCallback(
@@ -185,17 +191,19 @@ export function ArchitectureStory() {
                     {SETTING_LABEL[act.setting]}
                   </span>
                   <span>
-                    {step} / {STORY.acts.length}
+                    {step} / {STORY.captions.length}
                   </span>
                 </div>
-                <div className="story-caption__title">{act.title}</div>
+                <div className="story-caption__title">
+                  <RichText text={cap.title} />
+                </div>
                 <p
                   className="story-caption__body"
                   ref={captionRef}
                   tabIndex={-1}
                   aria-live="polite"
                 >
-                  <RichText text={act.text} />
+                  <RichText text={cap.text} />
                 </p>
               </figcaption>
             </div>

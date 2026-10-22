@@ -16,7 +16,7 @@ export interface Cue {
 }
 
 /** Named parts of the walkthrough, used by the Overview navigation. */
-export type SectionId = 'iso' | 'io' | 'kan' | 'assembly' | 'projection' | 'sparse';
+export type SectionId = 'intro' | 'iso' | 'io' | 'kan' | 'assembly' | 'projection' | 'sparse';
 
 export interface Act {
   id: string;
@@ -37,7 +37,17 @@ export interface Shot {
   roi: [number, number, number, number];
 }
 
+/** One caption of the walkthrough: what the figure shows from `at` until the next caption. */
+export interface Caption {
+  at: number;
+  title: string;
+  /** May contain `$...$` maths, `**bold**` and `*italic*`. */
+  text: string;
+}
+
 export interface Story {
+  /** Caption under the figure, finer than the acts: it follows the animation. */
+  captions: Caption[];
   cues: Record<string, Cue>;
   acts: Act[];
   /** Camera path for a wide stage. */

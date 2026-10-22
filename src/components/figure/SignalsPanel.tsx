@@ -30,7 +30,7 @@ function trace(seed: number, base: number, amp: number): Pt[] {
 /**
  * IO setting: only `u(t)` and `y(t)` are recorded.
  *
- * The history window really slides from T to T+1, and the encoder travels with
+ * The history window really slides from k to k+1, and the encoder travels with
  * it - one glyph moving, not a second network appearing - which is exactly the
  * consistency-encoder branch of the paper.
  */
@@ -128,7 +128,7 @@ export function SignalsPanel({ p, raw }: Props) {
         stroke="var(--fig-hair)"
         width={1.3}
       />
-      <SvgTex x={winX + winW + 16} y={BRACE.yT + 10} tex="T" size={15} opacity={pWin} width={44} height={26} />
+      <SvgTex x={winX + winW + 16} y={BRACE.yT + 10} tex="k" size={15} opacity={pWin} width={44} height={26} />
 
       {shift > 0.001 && (
         <g opacity={clamp01(shift * 3)}>
@@ -138,7 +138,7 @@ export function SignalsPanel({ p, raw }: Props) {
             stroke="var(--fig-hair)"
             width={1.3}
           />
-          <SvgTex x={winX + dx + winW + 22} y={BRACE.yT1 + 10} tex="T+1" size={15} width={56} height={26} />
+          <SvgTex x={winX + dx + winW + 22} y={BRACE.yT1 + 10} tex="k+1" size={15} width={56} height={26} />
         </g>
       )}
 
@@ -150,7 +150,7 @@ export function SignalsPanel({ p, raw }: Props) {
         width={1.8}
       />
 
-      {/* the encoder glyph: one object, which later travels to T+1 */}
+      {/* the encoder glyph: one object, which later travels to k+1 */}
       <DrawPath
         d={trapezoidVPath(ENC_T.cx, ENC_T.cy, ENC_T.topW, ENC_T.botW, ENC_T.h)}
         p={pEnc}
@@ -161,7 +161,7 @@ export function SignalsPanel({ p, raw }: Props) {
       <SvgTex
         x={ENC_T.cx}
         y={ENC_T.cy + 1}
-        tex="\mathcal{E}_{T}"
+        tex="\mathcal{E}_{k}"
         size={19}
         opacity={clamp01((pEnc - 0.5) / 0.5)}
         width={100}
@@ -203,7 +203,7 @@ export function SignalsPanel({ p, raw }: Props) {
           <SvgTex
             x={encX}
             y={encY + 1}
-            tex={shift > 0.72 ? '\\mathcal{E}_{T+1}' : '\\mathcal{E}_{\\eta}'}
+            tex={shift > 0.72 ? '\\mathcal{E}_{k+1}' : '\\mathcal{E}_{\\eta}'}
             size={17}
             width={110}
             height={38}
